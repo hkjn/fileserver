@@ -1,4 +1,4 @@
-// Fileserver is a minimal binary to serve contents from the file system over HTTP.
+// Fileserver is a minimal service for to serving contents from the file system over HTTP.
 
 package main
 
