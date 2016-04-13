@@ -1,0 +1,16 @@
+#
+# Build image for fileserver.
+#
+FROM golang
+
+MAINTAINER Henrik Jonsson <me@hkjn.me>
+
+WORKDIR /go/src/hkjn.me/fileserver/
+COPY *.go ./
+VOLUME ["/build"]
+RUN go test -race && \
+    go vet && \
+		CGO_ENABLED=0 go build
+
+CMD ["mv", "-v", "fileserver", "/build/"]
+
