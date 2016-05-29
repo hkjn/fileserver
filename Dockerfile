@@ -9,7 +9,5 @@ MAINTAINER Henrik Jonsson <me@hkjn.me>
 # bind mounted from host path or another container at runtime.
 ENV FILES_DIR /var/www
 
-# WORKDIR /usr/local/bin
-# COPY ["fileserver", "/fileserver"]
 ADD fileserver /
 CMD ["/fileserver"]
