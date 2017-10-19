@@ -3,8 +3,6 @@
 #
 FROM scratch
 
-MAINTAINER Henrik Jonsson <me@hkjn.me>
-
 # Path inside the container to serve files from. Likely will be
 # bind mounted from host path or another container at runtime.
 ENV FILES_DIR /var/www
