@@ -4,11 +4,10 @@
 FROM hkjn/golang
 
 ENV CGO_ENABLED=0
-WORKDIR /go/src/hkjn.me/fileserver/
+WORKDIR /home/go/src/hkjn.me/fileserver/
 COPY *.go ./
-VOLUME ["/build"]
 RUN go vet && \
-    go build
-
-CMD ["mv", "-v", "fileserver", "/build/"]
+    go install
+USER root
+CMD ["mv", "-v", "/home/go/bin/fileserver", "/build/"]
 
