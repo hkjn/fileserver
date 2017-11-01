@@ -3,23 +3,45 @@
 package main
 
 import (
+	"fmt"
+	"crypto/tls"
 	"log"
 	"net/http"
 	"os"
+
+	"golang.org/x/crypto/acme/autocert"
 )
 
 func main() {
-	filesDir := os.Getenv("FILES_DIR")
+	filesDir := os.Getenv("FILESERVER_DIR")
 	if filesDir == "" {
 		filesDir = "/var/www"
 	}
 	fs := http.FileServer(http.Dir(filesDir))
 	http.Handle("/", fs)
 
-	addr := os.Getenv("SERVER_PORT")
-	if addr == "" {
-		addr = ":8080"
+	addr := os.Getenv("FILESERVER_ADDR")
+        if addr == "" {
+	    addr = ":8080"
 	}
-	log.Printf("Fileserver serving %s on %s..\n", filesDir, addr)
-	panic(http.ListenAndServe(addr, nil))
+	s := &http.Server{
+		Addr: addr,
+	}
+	if addr == ":443" {
+		host := os.Getenv("FILESERVER_HOST")
+		if host == "" {
+			log.Fatalf("FILESERVER_HOST must be set to serve TLS.")
+		}
+		fmt.Printf("Serving TLS as %s..\n", host)
+		m := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			Cache:      autocert.DirCache("/etc/secrets/acme/"),
+			HostPolicy: autocert.HostWhitelist(host),
+		}
+		s.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
+		log.Fatal(s.ListenAndServeTLS("", ""))
+	} else {
+		fmt.Printf("Serving plaintext HTTP on %s..\n", addr)
+		log.Fatal(s.ListenAndServe())
+	}															
 }

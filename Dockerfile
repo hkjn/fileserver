@@ -7,5 +7,6 @@ FROM scratch
 # bind mounted from host path or another container at runtime.
 ENV FILES_DIR /var/www
 
-ADD fileserver /
+COPY ["fileserver", "./"]
+COPY ["ca-certificates.crt", "/etc/ssl/certs/"]
 CMD ["/fileserver"]
